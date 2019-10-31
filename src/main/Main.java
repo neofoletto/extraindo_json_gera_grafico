@@ -9,19 +9,9 @@
 package main;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
-import code.EixoX;
-import code.MainPersistenciaGRAFICO;
-import persistencia.Gravacao;
-import persistencia.Persistencia;
-import persistencia.PersistenciaCSV;
 import persistencia.PersistenciaGRAFICO;
-import persistencia.PersistenciaHTML;
-import persistencia.PersistenciaJSON;
-import persistencia.PersistenciaXML;
 import util.ExtratorURL;
 import util.Utils;
 
