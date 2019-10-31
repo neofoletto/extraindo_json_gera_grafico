@@ -168,36 +168,8 @@ public class Main {
 
 			case 8: // Gerar gráfico referente aos domínios
 				System.out.println("** Gerar gráfico referente aos domínios **");
-//				System.out.println("Informe código do gŕafico a ser gerado");
-//				System.out.println("\n1- Area Chart");
-//	      System.out.println("2- Line Chart");
-//	      System.out.println("3- Pie Chart");
-//	      System.out.print("0- Sair: ");
-//				index = validaImputInteger(imput);
-//				while (index < 0 || index > 3)
-//					index = validaImputInteger(imput);
-				
-//				if (index != 0) { // Tipo do gráfico - "AreaChart", "LineChart", "PieChart"
-//					switch (index) {
-//					case 1:
-//						new PersistenciaGRAFICO().grava("AreaChart", "AreaChart", "AreaChart", listaPessoa.retornaHashMapDominios());
-//						break;
-//					case 2:
-//						new PersistenciaGRAFICO().grava("LineChart", "LineChart", "LineChart", listaPessoa.retornaHashMapDominios());
-//						break;
-//					case 3:
-						new PersistenciaGRAFICO().grava("PieChart", "PieChart", "PieChart", listaPessoa.retornaHashMapDominios());
-						System.out.println("Gráfico gerado com sucesso.");
-//						break;
-
-//					default:
-//						break;
-//					}					
-//				} else {
-//					System.out.println("Exit Gerar gráfico módulo.");
-//					break;
-//				}
-				
+				new PersistenciaGRAFICO().grava("PieChart", "PieChart", "PieChart", listaPessoa.retornaHashMapDominios());
+				System.out.println("Gráfico gerado com sucesso.");
 				break;
 
 			default:

@@ -11,16 +11,11 @@
  *   The GNU General Public License is a free, copyleft license for
  * software and other kinds of works.
  */
-
 package persistencia;
-
-import code.EixoX;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -31,6 +26,7 @@ public class PersistenciaGRAFICO {
 
 	private final String PATH = "charts/";
 	private String style = "";
+	private Map<String, Integer> mapEixos;
 	
 	/**
 	 * 
@@ -60,21 +56,9 @@ public class PersistenciaGRAFICO {
 	    throws IOException {
 		FileWriter arquivo = new FileWriter(this.PATH.concat(fileName).concat(".html"));
 		PrintWriter persistir = new PrintWriter(arquivo);
-		EixoX eixoX;
-		List<EixoX> listaEixoX = new ArrayList<>();
-		List<String> listaEixoY = new ArrayList<>();
+		this.mapEixos = mapEixos;
 
-		for (String key : mapEixos.keySet()) {
-			// Capturamos o valor a partir da chave
-			Integer value = mapEixos.get(key);
-			listaEixoY.add(key);
-			eixoX = new EixoX();
-			eixoX.setNome(key);
-			eixoX.setDado(value);
-			listaEixoX.add(eixoX);
-		}
-
-		persistir.printf("%s\n", cabecalho(fileName, title, listaEixoY, listaEixoX));
+		persistir.printf("%s\n", cabecalho(fileName, title));
 		persistir.printf("%s\n", corpo(fileName));
 		persistir.printf("%s\n", rodape());
 		arquivo.close();
@@ -91,7 +75,7 @@ public class PersistenciaGRAFICO {
 	 * @return String.
 	 * @throws IOException
 	 */
-	private String cabecalho(String type, String title, List<String> listaEixoY, List<EixoX> listaEixoX)
+	private String cabecalho(String type, String title)
 	    throws IOException {
 		StringBuilder html = new StringBuilder();
 
@@ -101,7 +85,7 @@ public class PersistenciaGRAFICO {
 		html.append("<title>");
 		html.append(type);
 		html.append("</title>\n");
-		html.append(script(type, title, listaEixoY, listaEixoX));
+		html.append(script(type, title));
 		html.append("</head>\n");
 		return html.toString();
 	}
@@ -148,7 +132,7 @@ public class PersistenciaGRAFICO {
 	 * @return StringBuilder.
 	 * @throws IOException
 	 */
-	private StringBuilder script(String type, String title, List<String> listaEixoY, List<EixoX> listaEixoX)
+	private StringBuilder script(String type, String title)
 	    throws IOException {
 		StringBuilder html = new StringBuilder();
 
@@ -156,7 +140,7 @@ public class PersistenciaGRAFICO {
 		html.append("<script type=\"text/javascript\">\n");
 		html.append("google.charts.load('current', {'packages':['corechart']});\n");
 		html.append("google.charts.setOnLoadCallback(drawChart);\n");
-		html.append(functionDrawJS(type, title, listaEixoY, listaEixoX));
+		html.append(functionDrawJS(type, title));
 		html.append("</script>\n");
 		return html;
 	}
@@ -172,7 +156,7 @@ public class PersistenciaGRAFICO {
 	 * @return StringBuilder.
 	 * @throws IOException
 	 */
-	private StringBuilder functionDrawJS(String type, String title, List<String> listaEixoY, List<EixoX> listaEixoX)
+	private StringBuilder functionDrawJS(String type, String title)
 	    throws IOException {
 		StringBuilder html = new StringBuilder();
 		String titleArea = "";
@@ -180,7 +164,7 @@ public class PersistenciaGRAFICO {
 		html.append("function drawChart() {\n");
 		html.append("var data = google.visualization.arrayToDataTable([\n");
 
-		html.append(dados(type, listaEixoY, listaEixoX));
+		html.append(dados(type));
 
 		html.append("]);\n");
 
@@ -188,27 +172,9 @@ public class PersistenciaGRAFICO {
 		html.append("title: '");
 		html.append(title);
 		html.append("',\n");
-		switch (type) {
+		this.style = "width: 900px; height: 500px;";
+		html.append("is3D: true,");
 
-			case "AreaChart":
-				this.style = "width: 100%; height: 500px;";
-				html.append("hAxis: {title: '");
-				html.append(listaEixoY.get(0));
-				html.append("',  titleTextStyle: {color: '#333'}},\n");
-				html.append("vAxis: {minValue: 0}\n");
-				break;
-	
-			case "LineChart":
-				this.style = "width: 900px; height: 500px";
-				html.append("curveType: 'function',");
-				html.append("legend: { position: 'bottom' }");
-				break;
-	
-			case "PieChart":
-				this.style = "width: 900px; height: 500px;";
-				html.append("is3D: true,");
-				break;
-		}
 		html.append("};\n");
 
 		html.append("var chart = new google.visualization.");
@@ -230,57 +196,25 @@ public class PersistenciaGRAFICO {
 	 * @return StringBuilder.
 	 * @throws IOException
 	 */
-	private StringBuilder dados(String type, List<String> listaEixoY, List<EixoX> listaEixoX) throws IOException {
-    StringBuilder html = new StringBuilder();
+	private StringBuilder dados(String type) throws IOException {
+		StringBuilder html = new StringBuilder();
 
-    switch (type) {
-      case "AreaChart": case "LineChart":
-        for (int i = 0; i < listaEixoY.size(); i++) {
-          html.append("[");
-          html.append("'");
-          html.append(listaEixoY.get(i));
-          html.append("',");
-          for (int j = 0; j < listaEixoX.size(); j++) {
-            if (i == 0) {
-              html.append("'");
-              html.append(listaEixoX.get(j).getNome());
-              html.append("',");
-            } else {
-            	html.append("[");
-            	html.append("'");
-              html.append(listaEixoX.get(j).getNome());
-              html.append("',");
-              html.append(listaEixoX.get(j).getDado().get(0));
-              html.append(",");
-              html.append("],").deleteCharAt(html.length() - 3);
-            }
-            
-          }
-        }
-        break;
+		int i = 0;
+		for (String key : this.mapEixos.keySet()) {
+			// Capturamos o valor a partir da chave
+			Integer value = this.mapEixos.get(key);
 
-      case "PieChart":
-        for (int i = 0; i < listaEixoY.size(); i++) {
-          
-          if (i == 0) {
-          	html.append("[");
-            html.append("'");
-            html.append(listaEixoX.get(i).getNome());
-            html.append("','");
-            html.append(listaEixoX.get(i).getNome());
-            html.append("''");
-          } else {
-          	html.append("[");
-          	html.append("'");
-            html.append(listaEixoX.get(i - 1).getNome());
-            html.append("',");
-            html.append(listaEixoX.get(i - 1).getDado().get(0));
-            html.append(",");
-          }
-          html.append("],").deleteCharAt(html.length() - 3);
-        }
-        break;
-    }
-    return html.deleteCharAt(html.length() - 1);
-  }
+			if (i++ == 0) {
+				html.append("['");
+				html.append(key).append("','");
+				html.append(key).append("''");
+			} else {
+				html.append("['");
+				html.append(key).append("',");
+				html.append(value).append(",");
+			}
+			html.append("],").deleteCharAt(html.length() - 3);
+		}
+		return html.deleteCharAt(html.length() - 1);
+	}
 }
